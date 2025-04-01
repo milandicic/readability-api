@@ -1,5 +1,11 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 
+// Determine if we're in a production environment
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Get server URL from environment or use default
+const serverUrl = process.env.API_URL || 'http://localhost:3000';
+
 const options = {
     definition: {
         openapi: '3.0.0',
@@ -14,12 +20,12 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:3000',
-                description: 'Development server',
+                url: serverUrl,
+                description: isProduction ? 'Production server' : 'Development server',
             },
             {
-                url: 'https://readability-api.yourdomain.com',
-                description: 'Production server',
+                url: 'http://localhost:3000',
+                description: 'Local development server',
             },
         ],
         components: {

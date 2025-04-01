@@ -40,7 +40,8 @@ ENV PORT=3000 \
     RATE_LIMIT_WINDOW_MS=900000 \
     RATE_LIMIT_MAX=100 \
     AXIOS_TIMEOUT=10000 \
-    NODE_ENV=production
+    NODE_ENV=production \
+    API_URL=""
 
 # Add healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \

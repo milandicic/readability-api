@@ -21,8 +21,20 @@ const app = express();
 // Enable trust proxy - this is required when running behind a reverse proxy like Nginx
 app.set('trust proxy', 1);
 
-// Add Helmet middleware for security headers
-app.use(helmet());
+// Configure Helmet based on environment - less restrictive for development
+const isProduction = process.env.NODE_ENV === 'production';
+app.use(
+    helmet({
+        // Disable content security policy in development for Swagger UI to work properly
+        contentSecurityPolicy: isProduction ? undefined : false,
+        // Allow iframe embedding in development
+        frameguard: isProduction ? undefined : false,
+        // Allow cross-origin for Swagger UI resources
+        crossOriginEmbedderPolicy: false,
+        // Allow opener access for Swagger UI
+        crossOriginOpenerPolicy: { policy: 'unsafe-none' }
+    })
+);
 
 // Configure CORS - By default allow all origins but can be restricted via environment variables
 const corsOptions = {
@@ -101,8 +113,16 @@ app.get('/', (req, res) => {
     });
 });
 
-// API Documentation
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// API Documentation - Configure Swagger UI with options to work better in mixed HTTP/HTTPS environments
+const swaggerUiOptions = {
+    explorer: true,
+    swaggerOptions: {
+        validatorUrl: null,  // Disable validator
+        docExpansion: 'list',
+        persistAuthorization: true,
+    }
+};
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 
 // JSON version of the Swagger spec for API clients to consume
 app.get('/api/docs.json', (req, res) => {
