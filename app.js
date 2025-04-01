@@ -26,16 +26,20 @@ app.use(helmet());
 
 // Configure CORS - By default allow all origins but can be restricted via environment variables
 const corsOptions = {
-    origin: config.cors.allowAllOrigins ? '*' : function (origin, callback) {
+    origin: (config.cors && config.cors.allowAllOrigins) ? '*' : function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin || config.cors.allowedOrigins.indexOf(origin) !== -1) {
+        const allowedOrigins = (config.cors && config.cors.allowedOrigins) ?
+            config.cors.allowedOrigins : ['http://localhost:3000', 'http://localhost:8080'];
+
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
         }
     },
-    methods: config.cors.methods,
-    allowedHeaders: config.cors.allowedHeaders,
+    methods: (config.cors && config.cors.methods) ? config.cors.methods : ['GET', 'POST'],
+    allowedHeaders: (config.cors && config.cors.allowedHeaders) ?
+        config.cors.allowedHeaders : ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 200 // For legacy browser support (IE11, various SmartTVs)
 };
 app.use(cors(corsOptions));
