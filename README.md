@@ -72,6 +72,8 @@ docker run -p 3000:3000 \
   -d milandicic/readability-api:latest
 ```
 
+> **Note**: The Dockerfile uses `npm ci --omit=dev` for deterministic dependency installation. Make sure you have a valid package-lock.json file if you're building the Docker image yourself.
+
 ## API Documentation
 
 ### Authentication
@@ -315,6 +317,27 @@ print(json.dumps(result, indent=2))
 ### Running Behind a Reverse Proxy
 
 The API is configured to work seamlessly behind a reverse proxy. The `trust proxy` setting is enabled by default to properly handle client IP addresses for rate limiting.
+
+### Security Headers
+
+The API uses Helmet middleware to automatically set security-related HTTP headers including:
+- Content-Security-Policy
+- X-XSS-Protection
+- X-Frame-Options
+- X-Content-Type-Options
+- Strict-Transport-Security
+
+These headers help protect against common web vulnerabilities such as XSS, clickjacking, and content type sniffing.
+
+### Graceful Shutdown
+
+The API implements a graceful shutdown mechanism that:
+- Properly handles termination signals (SIGTERM, SIGINT)
+- Stops accepting new connections while completing in-progress requests
+- Performs a clean shutdown with a 10-second timeout for lingering connections
+- Logs the shutdown process
+
+This ensures the application behaves reliably in containerized environments (such as Docker) and during manual restarts.
 
 ### Handling Large HTML Content
 

@@ -7,13 +7,23 @@ WORKDIR /usr/src/app
 # Copy package files for better caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --production && \
+# Install dependencies and create non-root user
+RUN npm ci --omit=dev && \
     # Clean npm cache to reduce image size
-    npm cache clean --force
+    npm cache clean --force && \
+    # Add user and group if not already created by Node image
+    adduser -D -h /home/node node || true && \
+    # Set ownership of app directory to node user
+    chown -R node:node /usr/src/app
 
-# Bundle app source
-COPY . .
+# Copy only necessary files
+COPY index.js ./
+COPY config/ ./config/
+COPY routes/ ./routes/
+COPY middleware/ ./middleware/
+
+# Switch to non-root user
+USER node
 
 # Expose the port the app runs on
 EXPOSE ${PORT:-3000}
