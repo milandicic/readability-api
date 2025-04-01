@@ -314,8 +314,6 @@ print(json.dumps(result, indent=2))
 
 ## Advanced Usage
 
-### Running Behind a Reverse Proxy
-
 The API is configured to work seamlessly behind a reverse proxy. The `trust proxy` setting is enabled by default to properly handle client IP addresses for rate limiting.
 
 ### Security Headers
@@ -342,6 +340,79 @@ This ensures the application behaves reliably in containerized environments (suc
 ### Handling Large HTML Content
 
 The API accepts HTML content up to 10MB in size. If you need to process larger files, you can modify the `limit` parameter in the `express.json()` middleware configuration.
+
+## Security Features
+
+The API includes several security features to protect against common vulnerabilities:
+
+### SSRF Protection
+
+The API implements robust Server-Side Request Forgery (SSRF) protection:
+
+- All URLs are validated against private/reserved IP ranges
+- Only HTTP and HTTPS protocols are allowed
+- DNS resolution is checked before making requests
+- Blocked IP ranges include:
+  - Private networks (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
+  - Loopback addresses (127.0.0.0/8, ::1)
+  - Link-local addresses (169.254.0.0/16)
+  - AWS/GCP metadata service IPs
+  - Other reserved ranges
+
+### DoS Protection
+
+Protection against Denial of Service attacks:
+
+- Rate limiting based on IP address
+- 10MB request size limit
+- 10-second timeout on HTML parsing
+- Resource constraints on JSDOM to prevent resource exhaustion
+- Disabled external resource loading during parsing
+
+### Authentication
+
+Strong API token authentication:
+
+- Bearer token required for all API endpoints
+- Uses crypto.timingSafeEqual for constant-time token comparison
+- Token must be generated with high entropy
+
+### Other Security Measures
+
+- Helmet middleware for security headers
+- CORS protection
+- Express-validator for input validation
+- Structured logging with sensitive data redaction
+
+## Advanced Configuration
+
+The API provides detailed configuration options for various components:
+
+### Structured Logging
+
+The API uses Pino for structured JSON logging:
+
+```bash
+# Set log level
+LOG_LEVEL=debug # Options: trace, debug, info, warn, error, fatal
+```
+
+In development, logs are formatted for readability using pino-pretty. In production, logs are output as JSON for easier integration with log aggregation systems.
+
+### Running Tests
+
+The project includes automated tests to verify security and functionality:
+
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run tests in watch mode (during development)
+npm run test:watch
+```
 
 ## License
 

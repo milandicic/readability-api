@@ -13,6 +13,10 @@ RUN npm ci --omit=dev && \
     npm cache clean --force && \
     # Add user and group if not already created by Node image
     adduser -D -h /home/node node || true && \
+    # Create necessary directories
+    mkdir -p /usr/src/app/utils && \
+    mkdir -p /usr/src/app/middleware && \
+    mkdir -p /usr/src/app/logs && \
     # Set ownership of app directory to node user
     chown -R node:node /usr/src/app
 
@@ -21,6 +25,7 @@ COPY index.js ./
 COPY config/ ./config/
 COPY routes/ ./routes/
 COPY middleware/ ./middleware/
+COPY utils/ ./utils/
 
 # Switch to non-root user
 USER node
@@ -32,7 +37,8 @@ EXPOSE ${PORT:-3000}
 ENV PORT=3000 \
     RATE_LIMIT_WINDOW_MS=900000 \
     RATE_LIMIT_MAX=100 \
-    AXIOS_TIMEOUT=10000
+    AXIOS_TIMEOUT=10000 \
+    NODE_ENV=production
 
 # Add healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
