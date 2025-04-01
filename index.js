@@ -9,6 +9,9 @@ const { authenticateToken } = require('./middleware/auth');
 
 const app = express();
 
+// Enable trust proxy - this is required when running behind a reverse proxy like Nginx
+app.set('trust proxy', 1);
+
 // Enable CORS for all routes
 app.use(cors());
 

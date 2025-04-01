@@ -1,5 +1,5 @@
 # Use Node.js LTS version as the base image
-FROM node:20-alpine
+FROM --platform=$TARGETPLATFORM node:20-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
