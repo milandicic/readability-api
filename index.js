@@ -4,7 +4,7 @@ const rateLimit = require('express-rate-limit');
 const config = require('./config/app');
 const { getApiDocs } = require('./docs/api-docs');
 const { getWebInterface } = require('./docs/web-interface');
-const { parseUrl, parseHtmlEndpoint, legacyParse } = require('./routes/api');
+const { parseUrl, parseHtmlEndpoint } = require('./routes/api');
 const { authenticateToken } = require('./middleware/auth');
 
 const app = express();
@@ -30,7 +30,6 @@ app.get('/', (req, res) => res.send(getWebInterface()));
 // API endpoints
 app.post('/api/parse', parseUrl);
 app.post('/api/parse-html', parseHtmlEndpoint);
-app.post('/parse', legacyParse); // Legacy endpoint for backward compatibility
 
 // Start server
 app.listen(config.port, () => {

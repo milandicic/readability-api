@@ -4,6 +4,12 @@ const authenticateToken = (req, res, next) => {
         return next();
     }
 
+    // Allow requests with a valid API key
+    const apiKey = req.headers['x-api-key'];
+    if (req.path === '/api/parse' && apiKey === process.env.API_TOKEN) {
+        return next();
+    }
+
     // Get auth header
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN

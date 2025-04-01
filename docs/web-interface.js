@@ -37,25 +37,21 @@ const getWebInterface = () => `
                 word-wrap: break-word;
                 word-break: break-word;
             }
-            /* Image containment rules */
             #result img {
                 max-width: 100%;
                 height: auto;
                 display: block;
                 margin: 1em 0;
             }
-            /* Content wrapper styles */
             #result .content {
                 width: 100%;
                 overflow-x: hidden;
             }
-            /* Table containment */
             #result table {
                 max-width: 100%;
                 overflow-x: auto;
                 display: block;
             }
-            /* Code block containment */
             #result pre {
                 max-width: 100%;
                 overflow-x: auto;
@@ -63,7 +59,6 @@ const getWebInterface = () => `
                 background: #f5f5f5;
                 border-radius: 4px;
             }
-            /* Responsive iframe containment */
             #result iframe {
                 max-width: 100%;
                 width: 100%;
@@ -81,6 +76,16 @@ const getWebInterface = () => `
         <div id="result"></div>
 
         <script>
+            const API_TOKEN = '${process.env.API_TOKEN}';
+
+            // Add event listener for Enter key
+            document.getElementById('url').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    parseArticle();
+                }
+            });
+
             async function parseArticle() {
                 const url = document.getElementById('url').value;
                 if (!url) {
@@ -89,10 +94,11 @@ const getWebInterface = () => `
                 }
 
                 try {
-                    const response = await fetch('/parse', {
+                    const response = await fetch('/api/parse', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + API_TOKEN
                         },
                         body: JSON.stringify({ url })
                     });
@@ -106,14 +112,15 @@ const getWebInterface = () => `
                     }
 
                     resultDiv.innerHTML = \`
-                        <h2>\${data.title}</h2>
-                        <p><strong>Author:</strong> \${data.byline || 'Unknown'}</p>
-                        <p><strong>Length:</strong> \${data.length} characters</p>
-                        <p><strong>Excerpt:</strong> \${data.excerpt}</p>
-                        <div class="content">\${data.content}</div>
+                        <div>
+                            <h2>\${data.data.title}</h2>
+                            <p><strong>Author:</strong> \${data.data.byline || 'Unknown'}</p>
+                            <p><strong>Length:</strong> \${data.data.length} characters</p>
+                            <p><strong>Excerpt:</strong> \${data.data.excerpt}</p>
+                            <div class="content">\${data.data.content}</div>
+                        </div>
                     \`;
 
-                    // Ensure all links open in new tab
                     resultDiv.querySelectorAll('a').forEach(link => {
                         link.setAttribute('target', '_blank');
                         link.setAttribute('rel', 'noopener noreferrer');
@@ -128,4 +135,4 @@ const getWebInterface = () => `
     </html>
 `;
 
-module.exports = { getWebInterface }; 
+module.exports = { getWebInterface };
