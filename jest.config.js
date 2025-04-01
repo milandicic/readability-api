@@ -1,41 +1,57 @@
 module.exports = {
-    // Basic configuration
+    // Indicates which environment should be used for testing
     testEnvironment: 'node',
 
-    // Test timeout in milliseconds
-    testTimeout: 10000,
-
-    // Test match pattern
-    testMatch: ['**/tests/**/*.test.js'],
-
-    // Coverage configuration
-    collectCoverageFrom: [
-        'utils/**/*.js',
-        'routes/**/*.js',
-        'middleware/**/*.js',
-        '!**/node_modules/**',
-        '!**/vendor/**',
+    // The glob patterns Jest uses to detect test files
+    testMatch: [
+        '**/tests/**/*.test.js',
+        '**/tests/**/*.spec.js'
     ],
 
-    // Configure coverage thresholds
+    // An array of regexp pattern strings that are matched against all test paths
+    // matched tests are skipped
+    testPathIgnorePatterns: [
+        '/node_modules/'
+    ],
+
+    // Indicates whether each individual test should be reported during the run
+    verbose: true,
+
+    // Automatically clear mock calls and instances between every test
+    clearMocks: true,
+
+    // The directory where Jest should output its coverage files
+    coverageDirectory: 'coverage',
+
+    // An array of regexp pattern strings used to skip coverage collection
+    coveragePathIgnorePatterns: [
+        '/node_modules/',
+        '/tests/'
+    ],
+
+    // Collect coverage from these directories
+    collectCoverageFrom: [
+        'routes/**/*.js',
+        'middleware/**/*.js',
+        'utils/**/*.js',
+        'app.js'
+    ],
+
+    // The maximum amount of workers used to run your tests
+    maxWorkers: '50%',
+
+    // A list of reporter names that Jest uses when writing coverage reports
+    coverageReporters: ['text', 'lcov'],
+
+    // The threshold enforcement for coverage results
     coverageThreshold: {
         global: {
             branches: 70,
             functions: 70,
             lines: 70,
-            statements: 70,
-        },
+            statements: 70
+        }
     },
-
-    // Do not collect coverage from these files
-    coveragePathIgnorePatterns: [
-        '/node_modules/',
-        '/tests/',
-        '/coverage/'
-    ],
-
-    // Mock all required files to avoid side effects
-    clearMocks: true,
 
     // Setup files to run before tests
     setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],

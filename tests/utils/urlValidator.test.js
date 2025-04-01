@@ -5,7 +5,7 @@ jest.mock('dns', () => ({
     lookup: jest.fn().mockImplementation((hostname, callback) => {
         // These mappings simulate DNS resolution for test cases
         const ipMappings = {
-            'public-site.com': '203.0.113.1',       // Public IP (TEST-NET-3 block)
+            'public-site.com': '8.8.8.8',           // Changed to Google DNS (public IP)
             'internal-network.com': '192.168.1.1',  // Private IP
             'localhost-alias.com': '127.0.0.1',     // Loopback
             'aws-metadata.com': '169.254.169.254',  // AWS metadata service

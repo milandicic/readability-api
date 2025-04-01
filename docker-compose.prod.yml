@@ -6,22 +6,38 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'
-          memory: 512M
+          cpus: '1.0'
+          memory: 768M
         reservations:
           cpus: '0.25'
           memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+        failure_action: rollback
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "20m"
+        max-file: "5"
     environment:
       - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     # Uncomment and adjust as needed for your production environment
     # labels:
     #   - "traefik.enable=true"
     #   - "traefik.http.routers.readability.rule=Host(`api.example.com`)"
     #   - "traefik.http.routers.readability.entrypoints=websecure"
     #   - "traefik.http.routers.readability.tls.certresolver=myresolver"
-    #   - "traefik.http.services.readability.loadbalancer.server.port=${PORT:-3000}" 
+    #   - "traefik.http.services.readability.loadbalancer.server.port=${PORT:-3000}"
+    # Add monitoring and alerts (if you use Prometheus/Grafana)
+    # labels:
+    #   - "prometheus.scrape=true"
+    #   - "prometheus.port=3000"
+    #   - "prometheus.path=/metrics" 

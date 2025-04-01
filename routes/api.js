@@ -5,6 +5,54 @@ const config = require('../config/app');
 const { validateUrl } = require('../utils/urlValidator');
 const logger = require('../utils/logger');
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    ReadabilityResponse:
+ *      type: object
+ *      properties:
+ *        success:
+ *          type: boolean
+ *          description: Indicates if the operation was successful
+ *        data:
+ *          type: object
+ *          properties:
+ *            title:
+ *              type: string
+ *              description: Article title
+ *            byline:
+ *              type: string
+ *              description: Author name
+ *            content:
+ *              type: string
+ *              description: Article content in HTML format
+ *            textContent:
+ *              type: string
+ *              description: Plain text content
+ *            length:
+ *              type: integer
+ *              description: Content length
+ *            excerpt:
+ *              type: string
+ *              description: Article excerpt
+ *            siteName:
+ *              type: string
+ *              description: Site name
+ *            lang:
+ *              type: string
+ *              description: Content language
+ *    ErrorResponse:
+ *      type: object
+ *      properties:
+ *        success:
+ *          type: boolean
+ *          description: Always false for error responses
+ *        error:
+ *          type: string
+ *          description: Error message
+ */
+
 // JSDOM resource constraint configuration to prevent DoS attacks 
 const JSDOM_OPTIONS = {
     runScripts: 'outside-only',
@@ -131,7 +179,68 @@ const handleError = (error, res) => {
 };
 
 /**
- * Parse a URL and extract readable content
+ * @swagger
+ * /api/parse:
+ *   post:
+ *     summary: Extract readable content from a URL
+ *     tags: [Content]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - url
+ *             properties:
+ *               url:
+ *                 type: string
+ *                 description: The URL to fetch and parse
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ReadabilityResponse'
+ *       400:
+ *         description: Bad request - Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized - Missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Forbidden - Invalid token or restricted URL
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       429:
+ *         description: Too many requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       504:
+ *         description: Gateway timeout
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 const parseUrl = async (req, res) => {
     try {
@@ -182,7 +291,65 @@ const parseUrl = async (req, res) => {
 };
 
 /**
- * Parse raw HTML content directly
+ * @swagger
+ * /api/parse-html:
+ *   post:
+ *     summary: Parse raw HTML content directly
+ *     tags: [Content]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - html
+ *             properties:
+ *               html:
+ *                 type: string
+ *                 description: The HTML content to parse
+ *               url:
+ *                 type: string
+ *                 description: Optional URL to help with relative links
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ReadabilityResponse'
+ *       400:
+ *         description: Bad request - Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized - Missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Forbidden - Invalid token or restricted URL
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       429:
+ *         description: Too many requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 const parseHtmlEndpoint = async (req, res) => {
     try {

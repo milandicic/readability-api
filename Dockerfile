@@ -22,6 +22,8 @@ RUN npm ci --omit=dev && \
 
 # Copy only necessary files
 COPY index.js ./
+COPY app.js ./
+COPY swagger.js ./
 COPY config/ ./config/
 COPY routes/ ./routes/
 COPY middleware/ ./middleware/
