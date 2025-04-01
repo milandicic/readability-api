@@ -16,6 +16,8 @@ A standalone API service built on top of Mozilla's Readability.js library that e
 
 ## Installation
 
+### Standard Installation
+
 1. Clone the repository:
 ```bash
 git clone <your-repository-url>
@@ -52,6 +54,52 @@ node index.js
 ```
 
 The server will start at `http://localhost:3000` (or your configured PORT).
+
+### Docker Installation
+
+1. Clone the repository:
+```bash
+git clone <your-repository-url>
+cd readability
+```
+
+2. Create environment configuration:
+```bash
+cp .env.example .env
+```
+
+3. Configure your environment variables in `.env` (as shown above).
+
+4. Build and start the Docker container:
+```bash
+docker-compose up -d
+```
+
+For manual Docker build without docker-compose:
+```bash
+docker build -t readability-api .
+docker run -p 3000:3000 --env-file .env -d readability-api
+```
+
+The server will be available at `http://localhost:3000` (or your configured PORT).
+
+#### Docker Environment Variables
+
+When using docker-compose, all environment variables from your `.env` file will be used. Alternatively, you can set environment variables directly in the `docker-compose.yml` file.
+
+#### Docker Production Deployment
+
+For production deployment, consider:
+
+1. Using a reverse proxy like Nginx or Traefik
+2. Setting up HTTPS
+3. Implementing health checks (already configured in docker-compose.yml)
+4. Using Docker volumes for logs persistence
+
+Example production docker-compose command:
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
 
 ## API Documentation
 

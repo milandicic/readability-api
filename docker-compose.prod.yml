@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  readability-api:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      - NODE_ENV=production
+    # Uncomment and adjust as needed for your production environment
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.readability.rule=Host(`api.example.com`)"
+    #   - "traefik.http.routers.readability.entrypoints=websecure"
+    #   - "traefik.http.routers.readability.tls.certresolver=myresolver"
+    #   - "traefik.http.services.readability.loadbalancer.server.port=${PORT:-3000}" 
