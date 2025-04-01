@@ -1,4 +1,12 @@
 {
+  "name": "readability-api",
+  "version": "1.0.0",
+  "description": "A RESTful API service built on Mozilla's Readability.js for extracting clean article content from web pages",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
     "axios": "^1.8.4",
@@ -7,5 +15,12 @@
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.0",
     "jsdom": "^26.0.0"
-  }
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "license": "MIT"
 }
