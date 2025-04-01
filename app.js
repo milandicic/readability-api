@@ -24,22 +24,18 @@ app.set('trust proxy', 1);
 // Add Helmet middleware for security headers
 app.use(helmet());
 
-// Configure CORS with restricted access
+// Configure CORS - By default allow all origins but can be restricted via environment variables
 const corsOptions = {
-    // Uncomment and customize the following for production:
-    // origin: 'https://your-allowed-origin.com', // Single origin
-    origin: function (origin, callback) {
+    origin: config.cors.allowAllOrigins ? '*' : function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
-        // or from specific domains
-        const allowedOrigins = ['http://localhost:3000', 'http://localhost:8080'];
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        if (!origin || config.cors.allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
         }
     },
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: config.cors.methods,
+    allowedHeaders: config.cors.allowedHeaders,
     optionsSuccessStatus: 200 // For legacy browser support (IE11, various SmartTVs)
 };
 app.use(cors(corsOptions));
