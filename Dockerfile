@@ -26,7 +26,7 @@ ENV PORT=3000 \
 
 # Add healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD wget --spider -q http://localhost:${PORT:-3000}/api/docs || exit 1
+    CMD wget -q --spider --post-data='{"url":"https://example.com"}' --header="Content-Type: application/json" --header="Authorization: Bearer ${API_TOKEN}" http://localhost:${PORT:-3000}/api/parse || exit 1
 
 # Command to run the application
 CMD ["node", "index.js"] 
